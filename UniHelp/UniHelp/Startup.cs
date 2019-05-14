@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace UniHelp
 {
@@ -20,6 +21,23 @@ namespace UniHelp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            using (var context = new ApplicationDbContext())
+            {
+                context.Database.EnsureCreated();
+
+                if (!context.Settings.Any())
+                {
+                    context.Settings.Add(new SettingsDataModel
+                    {
+                        GroupName = "37",
+                        Feed = "test na 12ti",
+                        PublisherId = "Tasheva"
+                    });
+
+                    context.SaveChanges();
+                }
+            }
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // In production, the React files will be served from this directory
