@@ -25,17 +25,17 @@ namespace UniHelp
             {
                 context.Database.EnsureCreated();
 
-                if (!context.Settings.Any())
-                {
-                    context.Settings.Add(new SettingsDataModel
-                    {
-                        GroupName = "37",
-                        Feed = "test na 12ti",
-                        PublisherId = "Tasheva"
-                    });
+                //if (!context.Settings.Any())
+                //{
+                //    context.Settings.Add(new SettingsDataModel
+                //    {
+                //        GroupName = "37",
+                //        Feed = "test na 12ti",
+                //        PublisherId = "Tasheva"
+                //    });
 
-                    context.SaveChanges();
-                }
+                //    context.SaveChanges();
+                //}
             }
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

@@ -8,7 +8,7 @@ namespace UniHelp
 {
     public class ApplicationDbContext : DbContext
     {
-        public DbSet<SettingsDataModel> Settings { get; set; }
+        public DbSet<PostDataModel> Settings { get; set; }
 
         public ApplicationDbContext()
         {
