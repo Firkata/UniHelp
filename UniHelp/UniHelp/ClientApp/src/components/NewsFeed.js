@@ -7,12 +7,18 @@ export class NewsFeed extends Component {
     constructor(props) {
         super(props);
         this.state = { posts: [], loading: true };
+    }
 
+    getData() {
         fetch('api/SampleData/GetGroupPosts')
             .then(response => response.json())
             .then(data => {
                 this.setState({ posts: data, loading: false });
             });
+    }
+
+    componentDidMount() {
+        this.getData();
     }
 
     render() {
@@ -26,30 +32,14 @@ export class NewsFeed extends Component {
                 {contents}
             </div>
         );
-        //const par1 = "this is test text";
-        //const par2 = "this is test link";
-        //let contents = this.renderCreateForm();
-
-        //return (
-        //    //<Post text={par1} link={par2}/>
-        //    <div>
-        //        {contents}
-        //    </div>
-        //);
-    }
-
-    static hexToBase64(data) {
-        //return btoa(String.fromCharCode.apply(null, str.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" ")));
-        var base64 = btoa(
-            new Uint8Array(data)
-                .reduce((data, byte) => data + String.fromCharCode(byte), '')
-        );
-
-        return base64;
     }
 
     static renderPostsTable(posts) {
         let image = 'data:image/jpeg;base64,' + posts[0].image;
+        //const reader = new FileReader();
+        //let blob = new Blob(new Uint8Array(posts[0].file));
+        //let file = reader.readAsArrayBuffer(blob);
+
         return (
             <div>
                 <img src={image} width="100%" height="30%" max-height="1000"></img>
@@ -100,8 +90,7 @@ export class NewsFeed extends Component {
 
     handleSave(event) {
         event.preventDefault();
-        const data = new FormData(event.target); 
-        const tempModel = {GroupName:"Ime", Feed:"feeedd"};
+        const data = new FormData(event.target);
 
         fetch('api/sampledata/createpost', {
             method: 'POST',

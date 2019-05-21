@@ -50,17 +50,29 @@ namespace UniHelp.Controllers
             var data = new List<PostDataModel>();
             using (var context = new ApplicationDbContext())
             {
-                data = context.Settings.Where(s => s.Group == 39).ToList();
+                data = context.Settings.Where(s => s.Title == "Word File Test").ToList();
             }
 
-            var result = Enumerable.Range(1, 2).Select(index => new PostDataModel
+            //var result = Enumerable.Range(1, 2).Select(index => new PostDataModel
+            //{
+            //    Id = data[0].Id,
+            //    Title = data[0].Title,
+            //    Content = data[0].Content,
+            //    Image = data[0].Image,
+            //    File = data[0].File
+            //});
+
+            var result = new List<PostDataModel>
             {
-                Id = data[0].Id,
-                Title = data[0].Title,
-                Content = data[0].Content,
-                Image = data[0].Image,
-                File = data[0].File
-            });
+                new PostDataModel
+                {
+                    Id = data[0].Id,
+                    Title = data[0].Title,
+                    Content = data[0].Content,
+                    Image = data[0].Image,
+                    File = data[0].File
+                }
+            };
 
             return result;
         }

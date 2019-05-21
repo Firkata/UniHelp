@@ -10,7 +10,6 @@ export class CreatePost extends Component {
     render() {
         let contents = this.renderCreateForm();
         return (
-            //<Post text={par1} link={par2}/>
             <div>
                 {contents}
             </div>
