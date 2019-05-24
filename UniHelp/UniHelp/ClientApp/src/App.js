@@ -6,6 +6,9 @@ import { FetchData } from './components/FetchData';
 import { Counter } from './components/Counter';
 import { NewsFeed } from './components/NewsFeed';
 import { CreatePost } from './components/CreatePost';
+import { CreateUser } from './components/CreateUser';
+import { Login } from './components/Login';
+import { Logout } from './components/Logout';
 
 export default class App extends Component {
   displayName = App.name
@@ -14,10 +17,11 @@ export default class App extends Component {
     return (
       <Layout>
         <Route exact path='/' component={Home} />
-        <Route path='/counter' component={Counter} />
-        <Route path='/fetchdata' component={FetchData} />
         <Route path='/newsfeed' component={NewsFeed} />
         <Route path='/createpost' component={CreatePost} />
+        <Route path='/createuser' component={CreateUser} />
+        <Route path='/login' component={Login} />
+        <Route path='/logout' component={Logout} />
       </Layout>
     );
   }

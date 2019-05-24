@@ -23,16 +23,6 @@ export class NavMenu extends Component {
                 <Glyphicon glyph='home' /> Home
               </NavItem>
             </LinkContainer>
-            <LinkContainer to={'/counter'}>
-              <NavItem>
-                <Glyphicon glyph='education' /> Counter
-              </NavItem>
-            </LinkContainer>
-            <LinkContainer to={'/fetchdata'}>
-              <NavItem>
-                <Glyphicon glyph='th-list' /> Fetch data
-              </NavItem>
-            </LinkContainer>
             <LinkContainer to={'/newsfeed'}>
               <NavItem>
                 <Glyphicon glyph='th-list' /> News feed
@@ -41,6 +31,16 @@ export class NavMenu extends Component {
             <LinkContainer to={'/createpost'}>
               <NavItem>
                 <Glyphicon glyph='plus' /> Create Post
+              </NavItem>
+            </LinkContainer>
+            <LinkContainer to={'/createuser'}>
+              <NavItem>
+                <Glyphicon glyph='plus' /> Create User
+              </NavItem>
+            </LinkContainer>
+            <LinkContainer to={'/login'}>
+              <NavItem>
+                <Glyphicon glyph='plus' /> Login
               </NavItem>
             </LinkContainer>
           </Nav>
