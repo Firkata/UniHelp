@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace UniHelp
 {
@@ -36,14 +37,14 @@ namespace UniHelp
             // Adds scoped classes for things like UserManager, SignInManager, PasswordHashers etc...
             // Auto adds the validated user from a cookie to the HttpContext.User
             services.AddIdentity<ApplicationUser, IdentityRole>()
-
-                // Adds UserStore and RoleStore from this context
-                // That are consumed by the UserManager and RoleManager
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-
+                .AddRoleManager<RoleManager<IdentityRole>>()
+                .AddDefaultUI()
                 // Adds a provider that generates unique keys and hashes for things like
                 // forgot password links, phone number verification codes etc..
-                .AddDefaultTokenProviders();
+                .AddDefaultTokenProviders()
+                // Adds UserStore and RoleStore from this context
+                // That are consumed by the UserManager and RoleManager
+                .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.Configure<IdentityOptions>(options => 
             {
@@ -71,8 +72,24 @@ namespace UniHelp
             });
         }
 
+        private async Task CreateUserRoles(IServiceProvider serviceProvider)
+        {
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            IdentityResult adminResult;
+            IdentityResult staffResult;
+            var checkAdmin = await RoleManager.RoleExistsAsync("Admin");
+            var checkStaff = await RoleManager.RoleExistsAsync("Staff");
+
+            if (!checkAdmin)
+                adminResult = await RoleManager.CreateAsync(new IdentityRole("Admin"));
+            if (!checkStaff)
+                staffResult = await RoleManager.CreateAsync(new IdentityRole("Staff"));
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider services)
         {
             app.UseAuthentication();
 
@@ -106,6 +123,8 @@ namespace UniHelp
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+
+            CreateUserRoles(services).Wait();
         }
     }
 }

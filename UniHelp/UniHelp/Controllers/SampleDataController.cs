@@ -58,6 +58,7 @@ namespace UniHelp.Controllers
             }
         }
 
+        [Authorize(Roles = "Staff")]
         [HttpGet("[action]")]
         public IEnumerable<PostDataModel> GetGroupPosts()
         {
@@ -129,12 +130,17 @@ namespace UniHelp.Controllers
         {
             var result = await mUserManager.CreateAsync(new ApplicationUser
             {
-                UserName = "firas",
-                Email = "firas@abv.bg"
+                UserName = "pesho",
+                Email = "pesho@abv.bg"
             }, "pass");
 
+            ApplicationUser user = await mUserManager.FindByNameAsync("pesho");
+            await mUserManager.AddToRoleAsync(user, "Staff");
+
             if (result.Succeeded)
+            {   
                 return Content("User was created", "text/html");
+            }
 
             return Content("User creation failed", "text/html");
         }
@@ -144,7 +150,7 @@ namespace UniHelp.Controllers
         {
             await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
 
-            var result = await mSignInManager.PasswordSignInAsync("firas", "pass", true, false);
+            var result = await mSignInManager.PasswordSignInAsync("pesho", "pass", true, false);
 
             if (result.Succeeded)
                 return Redirect("/createpost");
