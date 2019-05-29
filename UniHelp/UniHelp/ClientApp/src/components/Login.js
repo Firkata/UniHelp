@@ -3,19 +3,50 @@
 export class Login extends Component {
 
     render() {
+        let content = this.renderLoginForm();
         return (
-            <h1>Login</h1>
+            <div>
+                {content}
+            </div>
         );
     }
 
-    componentDidMount() {
-        this.getData();
+    renderLoginForm() {
+        return (
+            <form onSubmit={this.handleLogin.bind(this)} >
+                <div className="form-group row" >
+                    <input type="hidden" name="postId" />
+                </div>
+                < div className="form-group row" >
+                    <label className=" control-label col-md-12" htmlFor="Username">Username</label>
+                    <div className="col-md-4">
+                        <input className="form-control" type="text" name="username" required />
+                    </div>
+                </div >
+                < div className="form-group row" >
+                    <label className=" control-label col-md-12" htmlFor="Password">Password</label>
+                    <div className="col-md-4">
+                        <input className="form-control" type="password" name="password" required />
+                    </div>
+                </div >
+                <div className="form-group">
+                    <button type="submit" className="btn btn-default">Login</button>
+                </div >
+            </form >
+        )
     }
 
-    getData() {
+    handleLogin(event) {
+        event.preventDefault();
+        const data = new FormData(event.target);
+
         fetch('api/sampledata/login', {
             method: 'POST',
-            body: "createuser",
+            body: data,
         });
-    }
+        //.then((response) => response.json())
+        //.then((responseJson) => {
+        //    this.props.history.push("/fetchemployee");
+        //}) 
+    }  
 }

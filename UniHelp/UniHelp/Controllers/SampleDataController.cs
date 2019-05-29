@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -58,7 +59,7 @@ namespace UniHelp.Controllers
             }
         }
 
-        [Authorize(Roles = "Staff")]
+        //[Authorize(Roles = "Staff")]
         [HttpGet("[action]")]
         public IEnumerable<PostDataModel> GetGroupPosts()
         {
@@ -123,22 +124,21 @@ namespace UniHelp.Controllers
             return RedirectToAction("counter");
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost]
         [Route("createuser")]
-        public async Task<IActionResult> CreateUserAsync(string ok)
+        public async Task<IActionResult> CreateUserAsync(string username, string password, int group, string role)
         {
             var result = await mUserManager.CreateAsync(new ApplicationUser
             {
-                UserName = "pesho",
-                Email = "pesho@abv.bg"
-            }, "pass");
-
-            ApplicationUser user = await mUserManager.FindByNameAsync("pesho");
-            await mUserManager.AddToRoleAsync(user, "Staff");
+                UserName = username,
+                GroupNumber = group
+            }, password);
 
             if (result.Succeeded)
-            {   
+            {
+                ApplicationUser user = await mUserManager.FindByNameAsync(username);
+                await mUserManager.AddToRoleAsync(user, role);
                 return Content("User was created", "text/html");
             }
 
@@ -146,14 +146,20 @@ namespace UniHelp.Controllers
         }
 
         [Route("login")]
-        public async Task<IActionResult> LoginAsync(string returnUrl)
+        public async Task<IActionResult> LoginAsync(string username, string password)
         {
             await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
 
-            var result = await mSignInManager.PasswordSignInAsync("pesho", "pass", true, false);
+            var result = await mSignInManager.PasswordSignInAsync(username, password, true, false);
 
             if (result.Succeeded)
+            {
+                //mSignInManager.
+                //var claims = new ClaimsPrincipal();
+                //claims.
+                //var loggedUser = mUserManager.GetUserName(claims);
                 return Redirect("/createpost");
+            }
 
             return Content("Failed to login", "text/html");
         }

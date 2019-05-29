@@ -8,6 +8,6 @@ namespace UniHelp
 {
     public class ApplicationUser : IdentityUser
     {
-
+        public int GroupNumber { get; set; }
     }
 }

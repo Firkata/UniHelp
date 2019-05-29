@@ -12,16 +12,24 @@ namespace UniHelp
     {
         public DbSet<PostDataModel> Settings { get; set; }
 
+        // Comment when initially creating databse
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
         }
 
+        // Use when initially creating database
+
+        //public ApplicationDbContext()
+        //{
+
+        //}
+
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
         //    base.OnConfiguring(optionsBuilder);
 
-        //    optionsBuilder.UseSqlServer("Server=.;Database=entityframework;Trusted_Connection=True;MultipleActiveResultSets=true;");
+        //    optionsBuilder.UseSqlServer("Server=.;Database=unihelp;Trusted_Connection=True;MultipleActiveResultSets=true;");
         //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

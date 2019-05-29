@@ -25,13 +25,15 @@ namespace UniHelp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Use when initially creating database
             //using (var context = new ApplicationDbContext())
             //{
             //    context.Database.EnsureCreated();
             //}
 
+            // Comment when initially creating database
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer("Server=.;Database=entityframework;Trusted_Connection=True;MultipleActiveResultSets=true;"));
+                options.UseSqlServer("Server=.;Database=unihelp;Trusted_Connection=True;MultipleActiveResultSets=true;"));
 
             // AddIdentity adds cookie based authentication
             // Adds scoped classes for things like UserManager, SignInManager, PasswordHashers etc...
@@ -79,13 +81,20 @@ namespace UniHelp
 
             IdentityResult adminResult;
             IdentityResult staffResult;
+
             var checkAdmin = await RoleManager.RoleExistsAsync("Admin");
-            var checkStaff = await RoleManager.RoleExistsAsync("Staff");
+            var checkAdministration = await RoleManager.RoleExistsAsync("Administration");
+            var checkTeacher = await RoleManager.RoleExistsAsync("Teacher");
+            var checkStudent = await RoleManager.RoleExistsAsync("Student");
 
             if (!checkAdmin)
                 adminResult = await RoleManager.CreateAsync(new IdentityRole("Admin"));
-            if (!checkStaff)
-                staffResult = await RoleManager.CreateAsync(new IdentityRole("Staff"));
+            if (!checkAdministration)
+                staffResult = await RoleManager.CreateAsync(new IdentityRole("Administration"));
+            if (!checkTeacher)
+                staffResult = await RoleManager.CreateAsync(new IdentityRole("Teacher"));
+            if (!checkStudent)
+                staffResult = await RoleManager.CreateAsync(new IdentityRole("Student"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -124,6 +133,7 @@ namespace UniHelp
                 }
             });
 
+            // Comment when initially creating database
             CreateUserRoles(services).Wait();
         }
     }
