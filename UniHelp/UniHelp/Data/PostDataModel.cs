@@ -26,5 +26,7 @@ namespace UniHelp
         public byte[] Image { get; set; }
         
         public byte[] File { get; set; }
+
+        public string Author { get; set; }
     }
 }

@@ -35,15 +35,16 @@ export class NewsFeed extends Component {
     }
 
     static renderPostsTable(posts) {
+        let author = posts[0].author;
+        let title = posts[0].title;
+        let content = posts[0].content;
         let image = 'data:image/jpeg;base64,' + posts[0].image;
         //const reader = new FileReader();
         //let blob = new Blob(new Uint8Array(posts[0].file));
         //let file = reader.readAsArrayBuffer(blob);
 
         return (
-            <div>
-                <img src={image} width="100%" height="30%" max-height="1000"></img>
-            </div>
+            <Post author={author} title={title} content={content} image={image}/>
         );
     }
 }

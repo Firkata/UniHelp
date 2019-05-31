@@ -29,6 +29,12 @@ export class CreateUser extends Component {
                         <input className="form-control" type="password" name="password" required />
                     </div>
                 </div >
+                < div className="form-group row" >
+                    <label className=" control-label col-md-12" htmlFor="Displayname">Display Name</label>
+                    <div className="col-md-4">
+                        <input className="form-control" type="text" name="displayname" required />
+                    </div>
+                </div >
                 <div className="form-group row">
                     <label className="control-label col-md-12" htmlFor="UserRole">User role</label>
                     <div className="col-md-4">

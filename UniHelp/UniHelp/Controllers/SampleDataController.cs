@@ -64,22 +64,12 @@ namespace UniHelp.Controllers
         public IEnumerable<PostDataModel> GetGroupPosts()
         {
             var data = new List<PostDataModel>();
-            //using (var context = new ApplicationDbContext())
-            //{
-            //    data = context.Settings.Where(s => s.Group == 36).ToList();
-            //}
+            var loggedUser = mUserManager.GetUserName(HttpContext.User);
+            var userData = mContext.Users.Where(s => s.UserName == loggedUser).ToList();
+            data = mContext.Settings.Where(s => s.Group == userData[0].GroupNumber).ToList();
 
-            data = mContext.Settings.Where(s => s.Group == 36).ToList();
-
-
-            //var result = Enumerable.Range(1, 2).Select(index => new PostDataModel
-            //{
-            //    Id = data[0].Id,
-            //    Title = data[0].Title,
-            //    Content = data[0].Content,
-            //    Image = data[0].Image,
-            //    File = data[0].File
-            //});
+            //var userData = mUserManager.GetUserAsync(HttpContext.User);
+            //var user = mUserManager.FindByIdAsync(User.Identity.Name);
 
             var result = new List<PostDataModel>
             {
@@ -89,10 +79,10 @@ namespace UniHelp.Controllers
                     Title = data[0].Title,
                     Content = data[0].Content,
                     Image = data[0].Image,
-                    File = data[0].File
+                    File = data[0].File,
+                    Author = data[0].Author
                 }
             };
-
             return result;
         }
 
@@ -111,7 +101,11 @@ namespace UniHelp.Controllers
                 file.CopyTo(memoryStream);
                 model.File = memoryStream.ToArray();
             }
-            
+
+            var loggedUser = mUserManager.GetUserName(HttpContext.User);
+            var userData = mContext.Users.Where(s => s.UserName == loggedUser).ToList();
+            model.Author = userData[0].DisplayName;
+
             //using (var context = new ApplicationDbContext())
             //{
             //    context.Settings.Add(model);
@@ -127,17 +121,19 @@ namespace UniHelp.Controllers
         //[Authorize]
         [HttpPost]
         [Route("createuser")]
-        public async Task<IActionResult> CreateUserAsync(string username, string password, int group, string role)
+        public async Task<IActionResult> CreateUserAsync(string username, string password, int group, string role, string displayname)
         {
             var result = await mUserManager.CreateAsync(new ApplicationUser
             {
                 UserName = username,
-                GroupNumber = group
+                GroupNumber = group,
+                DisplayName = displayname
             }, password);
 
             if (result.Succeeded)
             {
                 ApplicationUser user = await mUserManager.FindByNameAsync(username);
+                //var addClaimsResult = await mUserManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, role));
                 await mUserManager.AddToRoleAsync(user, role);
                 return Content("User was created", "text/html");
             }
@@ -146,7 +142,7 @@ namespace UniHelp.Controllers
         }
 
         [Route("login")]
-        public async Task<IActionResult> LoginAsync(string username, string password)
+        public async Task<string> LoginAsync(string username, string password)
         {
             await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
 
@@ -154,14 +150,13 @@ namespace UniHelp.Controllers
 
             if (result.Succeeded)
             {
-                //mSignInManager.
-                //var claims = new ClaimsPrincipal();
-                //claims.
-                //var loggedUser = mUserManager.GetUserName(claims);
-                return Redirect("/createpost");
+                //var loggedUser = mUserManager.GetUserName(HttpContext.User);
+                //var userData = mUserManager.GetUserAsync(HttpContext.User);
+                //var user = await mUserManager.FindByIdAsync(User.Identity.Name);
+                return username;     
             }
 
-            return Content("Failed to login", "text/html");
+            return "Failed to login";
         }
 
         [Route("logout")]

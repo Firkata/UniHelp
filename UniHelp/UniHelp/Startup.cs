@@ -61,7 +61,7 @@ namespace UniHelp
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/login";
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(1); 
+                options.ExpireTimeSpan = TimeSpan.FromDays(1); 
             });
 
 
