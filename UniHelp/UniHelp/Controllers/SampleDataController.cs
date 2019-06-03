@@ -59,7 +59,7 @@ namespace UniHelp.Controllers
             }
         }
 
-        //[Authorize(Roles = "Staff")]
+        [Authorize]
         [HttpGet("[action]")]
         public IEnumerable<PostDataModel> GetGroupPosts()
         {
@@ -67,7 +67,7 @@ namespace UniHelp.Controllers
             var loggedUser = mUserManager.GetUserName(HttpContext.User);
             var userData = mContext.Users.Where(s => s.UserName == loggedUser).ToList();
             data = mContext.Settings.Where(s => s.Group == userData[0].GroupNumber).ToList();
-
+            
             //var userData = mUserManager.GetUserAsync(HttpContext.User);
             //var user = mUserManager.FindByIdAsync(User.Identity.Name);
 
@@ -80,12 +80,15 @@ namespace UniHelp.Controllers
                     Content = data[0].Content,
                     Image = data[0].Image,
                     File = data[0].File,
-                    Author = data[0].Author
+                    Author = data[0].Author,
+                    FileName = data[0].FileName,
+                    Date = data[0].Date
                 }
             };
             return result;
         }
 
+        [Authorize(Roles = "Admin, Administration, Teacher")]
         [HttpPost]
         [Route("createpost")]
         public IActionResult CreatePost(PostDataModel model, IFormFile file, IFormFile image)
@@ -101,16 +104,12 @@ namespace UniHelp.Controllers
                 file.CopyTo(memoryStream);
                 model.File = memoryStream.ToArray();
             }
-
+            
             var loggedUser = mUserManager.GetUserName(HttpContext.User);
             var userData = mContext.Users.Where(s => s.UserName == loggedUser).ToList();
             model.Author = userData[0].DisplayName;
-
-            //using (var context = new ApplicationDbContext())
-            //{
-            //    context.Settings.Add(model);
-            //    context.SaveChanges();
-            //}
+            model.FileName = file.FileName;
+            model.Date = DateTime.Now;
 
             mContext.Settings.Add(model);
             mContext.SaveChanges();
@@ -118,7 +117,7 @@ namespace UniHelp.Controllers
             return RedirectToAction("counter");
         }
 
-        //[Authorize]
+        [Authorize(Roles = "Admin, Administration")]
         [HttpPost]
         [Route("createuser")]
         public async Task<IActionResult> CreateUserAsync(string username, string password, int group, string role, string displayname)
@@ -159,6 +158,7 @@ namespace UniHelp.Controllers
             return "Failed to login";
         }
 
+        [Authorize]
         [Route("logout")]
         public async Task<IActionResult> LogoutAsync()
         {

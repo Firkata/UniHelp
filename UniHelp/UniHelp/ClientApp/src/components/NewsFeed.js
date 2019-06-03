@@ -34,17 +34,39 @@ export class NewsFeed extends Component {
         );
     }
 
+    static base64ToArrayBuffer(base64) {
+        const binaryString = window.atob(base64);
+        const bytes = new Uint8Array(binaryString.length);
+        //return bytes.map((byte, i) => binaryString.charCodeAt(i));
+        return bytes.map(function (byte, i) { return binaryString.charCodeAt(i); });
+    }
+
+    static generateDownloadUrl(arrayBuffer) {
+        const blob = new Blob([arrayBuffer]);
+        return URL.createObjectURL(blob);
+
+        //const reader = new FileReader();
+        //let blob = new Blob(new Uint8Array(posts[0].file));
+        //let file = reader.readAsArrayBuffer(blob);
+        //let uriContent = "data:application/octet-stream," + encodeURIComponent(file);
+        //window.open(uriContent, "document");
+    }
+
     static renderPostsTable(posts) {
         let author = posts[0].author;
         let title = posts[0].title;
         let content = posts[0].content;
         let image = 'data:image/jpeg;base64,' + posts[0].image;
-        //const reader = new FileReader();
-        //let blob = new Blob(new Uint8Array(posts[0].file));
-        //let file = reader.readAsArrayBuffer(blob);
+        let file = posts[0].file;
+        let fileName = posts[0].fileName;
+        let date = posts[0].date;
+
+        console.log(author);
+        let arrayBuffer = NewsFeed.base64ToArrayBuffer(file);
+        let fileUrl = NewsFeed.generateDownloadUrl(arrayBuffer);
 
         return (
-            <Post author={author} title={title} content={content} image={image}/>
+            <Post author={author} title={title} content={content} image={image} file={fileUrl} fileName={fileName} date={date}/>
         );
     }
 }

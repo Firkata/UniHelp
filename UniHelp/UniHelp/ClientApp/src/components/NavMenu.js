@@ -43,6 +43,11 @@ export class NavMenu extends Component {
                 <Glyphicon glyph='plus' /> Login
               </NavItem>
             </LinkContainer>
+            <LinkContainer to={'/logout'}>
+              <NavItem>
+                <Glyphicon glyph='minus' /> Logout
+              </NavItem>
+            </LinkContainer>
           </Nav>
         </Navbar.Collapse>
       </Navbar>

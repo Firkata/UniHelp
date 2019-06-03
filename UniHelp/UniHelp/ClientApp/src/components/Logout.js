@@ -17,5 +17,6 @@ export class Logout extends Component {
             method: 'POST',
             body: "createuser",
         });
+        //.then(this.props.hisory.push('/login'));
     }
 }
