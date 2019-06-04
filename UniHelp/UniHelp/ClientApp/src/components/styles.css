@@ -1,6 +1,11 @@
 ﻿body {
 }
 
+.postList {
+    padding: 0;
+    list-style-type: none;
+}
+
 .postDiv  {
     border-style : solid;
     border-color : lightgray;
@@ -40,8 +45,29 @@
     font-weight: bold;
     margin-top: 5px;
     margin-left: 5px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.dateStyle {
+    margin-top: 5px;
+    margin-left: 5px;
+    display: inline-block;
+    vertical-align: top;
 }
 
 .lineStyle {
     margin-top: 0px;
+}
+
+.downloadButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 3px;
+}
+
+.downloadLink {
+    margin-right: 7px;
+    margin-bottom: 0px;
 }

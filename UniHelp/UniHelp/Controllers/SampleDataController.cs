@@ -61,30 +61,42 @@ namespace UniHelp.Controllers
 
         [Authorize]
         [HttpGet("[action]")]
-        public IEnumerable<PostDataModel> GetGroupPosts()
+        public IEnumerable<PostDataModelFront> GetGroupPosts()
         {
             var data = new List<PostDataModel>();
             var loggedUser = mUserManager.GetUserName(HttpContext.User);
             var userData = mContext.Users.Where(s => s.UserName == loggedUser).ToList();
             data = mContext.Settings.Where(s => s.Group == userData[0].GroupNumber).ToList();
-            
-            //var userData = mUserManager.GetUserAsync(HttpContext.User);
-            //var user = mUserManager.FindByIdAsync(User.Identity.Name);
 
-            var result = new List<PostDataModel>
+            var result = new List<PostDataModelFront>();
+            foreach (var post in data)
             {
-                new PostDataModel
+                int time = post.Date.Subtract(DateTime.Now).Days;
+                string timeAgo = "days";
+                if (time == 0)
                 {
-                    Id = data[0].Id,
-                    Title = data[0].Title,
-                    Content = data[0].Content,
-                    Image = data[0].Image,
-                    File = data[0].File,
-                    Author = data[0].Author,
-                    FileName = data[0].FileName,
-                    Date = data[0].Date
+                    time = post.Date.Subtract(DateTime.Now).Hours;
+                    timeAgo = "hours";
+                    if (time == 0)
+                    {
+                        time = post.Date.Subtract(DateTime.Now).Minutes;
+                        timeAgo = "minutes";
+                    }
                 }
-            };
+
+                result.Add(new PostDataModelFront
+                {
+                    Title = post.Title,
+                    Content = post.Content,
+                    Image = post.Image,
+                    File = post.File,
+                    Author = post.Author,
+                    FileName = post.FileName,
+                    Date = Math.Abs(time),
+                    DateName = timeAgo
+                });
+            }
+
             return result;
         }
 

@@ -18,6 +18,16 @@ export class NavMenu extends Component {
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav>
+            <LinkContainer to={'/login'}>
+              <NavItem>
+                <Glyphicon glyph='plus' /> Login
+              </NavItem>
+            </LinkContainer>
+            <LinkContainer to={'/logout'}>
+              <NavItem>
+                <Glyphicon glyph='minus' /> Logout
+              </NavItem>
+            </LinkContainer>
             <LinkContainer to={'/'} exact>
               <NavItem>
                 <Glyphicon glyph='home' /> Home
@@ -36,16 +46,6 @@ export class NavMenu extends Component {
             <LinkContainer to={'/createuser'}>
               <NavItem>
                 <Glyphicon glyph='plus' /> Create User
-              </NavItem>
-            </LinkContainer>
-            <LinkContainer to={'/login'}>
-              <NavItem>
-                <Glyphicon glyph='plus' /> Login
-              </NavItem>
-            </LinkContainer>
-            <LinkContainer to={'/logout'}>
-              <NavItem>
-                <Glyphicon glyph='minus' /> Logout
               </NavItem>
             </LinkContainer>
           </Nav>
