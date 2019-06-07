@@ -33,6 +33,7 @@ export class CreatePost extends Component {
                     <div className="col-md-4">
                         <select className="form-control" data-val="true" name="group" required>
                             <option value="">-- Select Group --</option>
+                            <option value="0">0</option>
                             <option value="36">36</option>
                             <option value="37">37</option>
                             <option value="38">38</option>
@@ -43,7 +44,7 @@ export class CreatePost extends Component {
                 < div className="form-group row" >
                     <label className=" control-label col-md-12" htmlFor="Content">Content</label>
                     <div className="col-md-4">
-                        <input className="form-control" type="text" name="content" required />
+                        <textarea className="form-control" type="text" name="content" required />
                     </div>
                 </div >
                 <div className="form-group row">

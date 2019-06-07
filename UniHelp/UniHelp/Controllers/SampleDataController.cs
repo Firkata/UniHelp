@@ -64,9 +64,25 @@ namespace UniHelp.Controllers
         public IEnumerable<PostDataModelFront> GetGroupPosts()
         {
             var data = new List<PostDataModel>();
+            var data2 = new List<PostDataModel>();
             var loggedUser = mUserManager.GetUserName(HttpContext.User);
             var userData = mContext.Users.Where(s => s.UserName == loggedUser).ToList();
-            data = mContext.Settings.Where(s => s.Group == userData[0].GroupNumber).ToList();
+
+            if(userData[0].GroupNumber == 0)
+            {
+                data = mContext.Settings.ToList();
+            }
+            else
+            {
+                data = mContext.Settings.Where(s => s.Group == userData[0].GroupNumber).ToList();
+                data2 = mContext.Settings.Where(s => s.Group == 0).ToList();
+                foreach (var post in data2)
+                {
+                    data.Add(post);
+                }
+            }
+            
+            data.OrderBy(s => s.Date);
 
             var result = new List<PostDataModelFront>();
             foreach (var post in data)
