@@ -61,8 +61,8 @@ export class Login extends Component {
             window.localStorage.setItem('userName', data[0]);
             window.localStorage.setItem('userRole', data[1]);
             window.location.reload();
-            //if(data[0] != "failed")
-            //    window.location.href = "https://192.168.1.3:5566/newsfeed";
+            if(data[0] != "failed")
+                window.location.href = "https://192.168.1.3:5566/newsfeed";
         });
 
         //.then((response) => response.json())
