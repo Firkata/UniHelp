@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace UniHelp.Controllers
@@ -26,7 +27,7 @@ namespace UniHelp.Controllers
             mUserManager = userManager;
             mSignInManager = signInManager;
         }
-        
+
         private static string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -68,7 +69,7 @@ namespace UniHelp.Controllers
             var loggedUser = mUserManager.GetUserName(HttpContext.User);
             var userData = mContext.Users.Where(s => s.UserName == loggedUser).ToList();
 
-            if(userData[0].GroupNumber == 0)
+            if (userData[0].GroupNumber == 0)
             {
                 data = mContext.Settings.ToList();
             }
@@ -81,7 +82,7 @@ namespace UniHelp.Controllers
                     data.Add(post);
                 }
             }
-            
+
             data.OrderBy(s => s.Date);
 
             var result = new List<PostDataModelFront>();
@@ -121,10 +122,13 @@ namespace UniHelp.Controllers
         [Route("createpost")]
         public IActionResult CreatePost(PostDataModel model, IFormFile file, IFormFile image)
         {
-            using (var memoryStream = new MemoryStream())
+            if (image != null)
             {
-                image.CopyTo(memoryStream);
-                model.Image = memoryStream.ToArray();
+                using (var memoryStream = new MemoryStream())
+                {
+                    image.CopyTo(memoryStream);
+                    model.Image = memoryStream.ToArray();
+                }
             }
 
             using (var memoryStream = new MemoryStream())
@@ -132,7 +136,7 @@ namespace UniHelp.Controllers
                 file.CopyTo(memoryStream);
                 model.File = memoryStream.ToArray();
             }
-            
+
             var loggedUser = mUserManager.GetUserName(HttpContext.User);
             var userData = mContext.Users.Where(s => s.UserName == loggedUser).ToList();
             model.Author = userData[0].DisplayName;
@@ -169,7 +173,8 @@ namespace UniHelp.Controllers
         }
 
         [Route("login")]
-        public async Task<string> LoginAsync(string username, string password)
+        [HttpPost]
+        public async Task<ActionResult> LoginAsync(string username, string password)
         {
             await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
 
@@ -177,21 +182,22 @@ namespace UniHelp.Controllers
 
             if (result.Succeeded)
             {
-                //var loggedUser = mUserManager.GetUserName(HttpContext.User);
-                //var userData = mUserManager.GetUserAsync(HttpContext.User);
-                //var user = await mUserManager.FindByIdAsync(User.Identity.Name);
-                return username;     
+                var userData = mContext.Users.Where(s => s.UserName == username).ToList();
+                var userRoleId = mContext.UserRoles.Where(s => s.UserId == userData[0].Id).ToList();
+                var userRole = mContext.Roles.Where(s => s.Id == userRoleId[0].RoleId).ToList();
+
+                return new JsonResult(new[] { userData[0].DisplayName, userRole[0].Name }, new JsonSerializerSettings());
             }
 
-            return "Failed to login";
+            return new JsonResult(new[] { "failed", "unregistered"}, new JsonSerializerSettings());
         }
-
+        
         [Authorize]
         [Route("logout")]
         public async Task<IActionResult> LogoutAsync()
         {
             await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-            return Content("logged out");
+            return new JsonResult(new[] { "failed", "unregistered" }, new JsonSerializerSettings());
         }
     }
 }

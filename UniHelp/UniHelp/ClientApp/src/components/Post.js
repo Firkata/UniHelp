@@ -12,8 +12,8 @@ export class Post extends Component {
                 <p className="titleStyle">{this.props.title} </p>
                 <p className="contentStyle">{this.props.content}</p>
                 <img src={this.props.image} className="imageStyle"></img>
-                <a href={this.props.file} download={this.props.fileName} class="btn btn-info btn-lg downloadButton">
-                    <span class="glyphicon glyphicon-download-alt downloadLink"></span>
+                <a href={this.props.file} download={this.props.fileName} className="btn btn-info btn-lg downloadButton">
+                    <span className="glyphicon glyphicon-download-alt downloadLink"></span>
                     {this.props.fileName}
                 </a>
             </div>
