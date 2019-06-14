@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
@@ -8,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace UniHelp
@@ -25,15 +23,15 @@ namespace UniHelp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Use when initially creating database
-            //using (var context = new ApplicationDbContext())
-            //{
-            //    context.Database.EnsureCreated();
-            //}
-
-            // Comment when initially creating database
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+            optionsBuilder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            using (var context = new ApplicationDbContext(optionsBuilder.Options))
+            {
+                context.Database.EnsureCreated();
+            }
+            
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer("Server=.;Database=unihelp;Trusted_Connection=True;MultipleActiveResultSets=true;"));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             // AddIdentity adds cookie based authentication
             // Adds scoped classes for things like UserManager, SignInManager, PasswordHashers etc...
@@ -74,7 +72,7 @@ namespace UniHelp
             });
         }
 
-        private async Task CreateUserRoles(IServiceProvider serviceProvider)
+        private async Task SeedDatabase(IServiceProvider serviceProvider)
         {
             var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var UserManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -95,6 +93,23 @@ namespace UniHelp
                 staffResult = await RoleManager.CreateAsync(new IdentityRole("Teacher"));
             if (!checkStudent)
                 staffResult = await RoleManager.CreateAsync(new IdentityRole("Student"));
+
+            var hasAdmin = await UserManager.FindByNameAsync("admin");
+            if(hasAdmin == null)
+            {
+                var result = await UserManager.CreateAsync(new ApplicationUser
+                {
+                    UserName = "admin",
+                    GroupNumber = 0,
+                    DisplayName = "Admin"
+                }, "admin123");
+
+                if (result.Succeeded)
+                {
+                    ApplicationUser user = await UserManager.FindByNameAsync("admin");
+                    await UserManager.AddToRoleAsync(user, "Admin");
+                }
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -133,8 +148,7 @@ namespace UniHelp
                 }
             });
 
-            // Comment when initially creating database
-            CreateUserRoles(services).Wait();
+            SeedDatabase(services).Wait();
         }
     }
 }

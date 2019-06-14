@@ -33,6 +33,9 @@ export class NavMenu extends Component {
             case "Administration":
                 result = this.renderAdministrationAccount();
                 break;
+            case "Admin":
+                result = this.renderAdministrationAccount();
+                break;
             default:
                 result = this.renderUnregisteredAccount();
         }
