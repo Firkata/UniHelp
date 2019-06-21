@@ -8,7 +8,12 @@ export class CreatePost extends Component {
     }
 
     render() {
-        let contents = this.renderCreateForm();
+        let contents = window.localStorage.getItem('userRole') == "Admin"
+            || window.localStorage.getItem('userRole') == "Administration"
+            || window.localStorage.getItem('userRole') == "Teacher"
+            ? this.renderCreateForm()
+            : "You are not authorized to access this page" ;
+
         return (
             <div>
                 {contents}
@@ -60,8 +65,7 @@ export class CreatePost extends Component {
                     </div>
                 </div>
                 <div className="form-group">
-                    <button type="submit" className="btn btn-default">Save</button>
-                    <button className="btn" onClick={this.handleCancel}>Cancel</button>
+                    <button type="submit" className="btn btn-default">Create</button>
                 </div >
             </form >
         )
@@ -88,10 +92,11 @@ export class CreatePost extends Component {
         fetch('api/sampledata/createpost', {
             method: 'POST',
             body: data,
-        });
-        //.then((response) => response.json())
-        //.then((responseJson) => {
-        //    this.props.history.push("/fetchemployee");
-        //}) 
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                alert(data);
+            });
     }  
 }

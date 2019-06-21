@@ -24,7 +24,7 @@ export class NewsFeed extends Component {
     render() {
 
         let contents = this.state.loading
-            ? <p><em>Loading...</em></p>
+            ? <p><em>Loading news feed...</em></p>
             : NewsFeed.renderPostsTable(this.state.posts);
 
         return (
@@ -52,18 +52,25 @@ export class NewsFeed extends Component {
                     let author = item.author;
                     let title = item.title;
                     let content = item.content;
-                    let image = 'data:image/jpeg;base64,' + item.image;
-                    let file = item.file;
-                    let fileName = item.fileName;
+                    let fileName, fileUrl, image;
+
+                    if (item.image != "null") {
+                        image = 'data:image/jpeg;base64,' + item.image;
+                    }
+                    if (item.file != "null") {
+                        let file = item.file;
+                        fileName = item.fileName;
+                        let arrayBuffer = NewsFeed.base64ToArrayBuffer(file);
+                        fileUrl = NewsFeed.generateDownloadUrl(arrayBuffer);
+                    }
+                    
                     let date = item.date;
                     let dateName = item.dateName;
-
-                    let arrayBuffer = NewsFeed.base64ToArrayBuffer(file);
-                    let fileUrl = NewsFeed.generateDownloadUrl(arrayBuffer);
-
+                    let group = item.group;
+                    
                     return (
                         <div key={index}>
-                            <Post author={author} title={title} content={content} image={image} file={fileUrl} fileName={fileName} date={date} dateName={dateName} />
+                            <Post author={author} title={title} content={content} image={image} file={fileUrl} fileName={fileName} date={date} dateName={dateName} group={group}/>
                         </div>
                     )
                 })}

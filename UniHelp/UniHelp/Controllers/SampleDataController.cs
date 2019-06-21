@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -50,21 +50,21 @@ namespace UniHelp.Controllers
                 }
             }
 
-            data.OrderBy(s => s.Date);
+            data = data.OrderByDescending(s => s.Date).ToList();
 
             var result = new List<PostDataModelFront>();
             foreach (var post in data)
             {
                 int time = post.Date.Subtract(DateTime.Now).Days;
-                string timeAgo = "days";
+                string timeAgo = "дни";
                 if (time == 0)
                 {
                     time = post.Date.Subtract(DateTime.Now).Hours;
-                    timeAgo = "hours";
+                    timeAgo = "часа";
                     if (time == 0)
                     {
                         time = post.Date.Subtract(DateTime.Now).Minutes;
-                        timeAgo = "minutes";
+                        timeAgo = "минути";
                     }
                 }
 
@@ -77,7 +77,8 @@ namespace UniHelp.Controllers
                     Author = post.Author,
                     FileName = post.FileName,
                     Date = Math.Abs(time),
-                    DateName = timeAgo
+                    DateName = timeAgo,
+                    Group = post.Group
                 });
             }
 
@@ -98,22 +99,25 @@ namespace UniHelp.Controllers
                 }
             }
 
-            using (var memoryStream = new MemoryStream())
+            if (file != null)
             {
-                file.CopyTo(memoryStream);
-                model.File = memoryStream.ToArray();
+                using (var memoryStream = new MemoryStream())
+                {
+                    file.CopyTo(memoryStream);
+                    model.File = memoryStream.ToArray();
+                    model.FileName = file.FileName;
+                }
             }
 
             var loggedUser = mUserManager.GetUserName(HttpContext.User);
             var userData = mContext.Users.Where(s => s.UserName == loggedUser).ToList();
             model.Author = userData[0].DisplayName;
-            model.FileName = file.FileName;
             model.Date = DateTime.Now;
 
             mContext.Settings.Add(model);
             mContext.SaveChanges();
 
-            return RedirectToAction("counter");
+            return new JsonResult("Post created successfully", new JsonSerializerSettings());
         }
 
         [Authorize(Roles = "Admin, Administration")]
@@ -133,10 +137,10 @@ namespace UniHelp.Controllers
                 ApplicationUser user = await mUserManager.FindByNameAsync(username);
                 //var addClaimsResult = await mUserManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, role));
                 await mUserManager.AddToRoleAsync(user, role);
-                return Content("User was created", "text/html");
+                return new JsonResult("User created successfully", new JsonSerializerSettings());
             }
 
-            return Content("User creation failed", "text/html");
+            return new JsonResult("Failed to create user" + result.Errors.First().Code, new JsonSerializerSettings());
         }
 
         [Route("login")]
@@ -144,7 +148,6 @@ namespace UniHelp.Controllers
         public async Task<ActionResult> LoginAsync(string username, string password)
         {
             await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-
             var result = await mSignInManager.PasswordSignInAsync(username, password, true, false);
 
             if (result.Succeeded)
@@ -152,7 +155,6 @@ namespace UniHelp.Controllers
                 var userData = mContext.Users.Where(s => s.UserName == username).ToList();
                 var userRoleId = mContext.UserRoles.Where(s => s.UserId == userData[0].Id).ToList();
                 var userRole = mContext.Roles.Where(s => s.Id == userRoleId[0].RoleId).ToList();
-
                 return new JsonResult(new[] { userData[0].DisplayName, userRole[0].Name }, new JsonSerializerSettings());
             }
 

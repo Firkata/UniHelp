@@ -36,9 +36,11 @@
 
 .titleStyle {
     font-weight: bold;
+    margin-left: 5px;
 }
 
 .contentStyle {
+    margin-left: 5px;
 }
 
 .authorStyle {

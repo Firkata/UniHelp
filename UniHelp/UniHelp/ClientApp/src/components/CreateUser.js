@@ -3,10 +3,14 @@
 export class CreateUser extends Component {
 
     render() {
-        let content = this.renderCreateForm();
+        let contents = window.localStorage.getItem('userRole') == "Admin"
+            || window.localStorage.getItem('userRole') == "Administration"
+            ? this.renderCreateForm()
+            : "You are not authorized to access this page";
+
         return (
             <div>
-                {content}
+                {contents}
             </div>
         );
     }
@@ -73,10 +77,11 @@ export class CreateUser extends Component {
         fetch('api/sampledata/createuser', {
             method: 'POST',
             body: data,
-        });
-        //.then((response) => response.json())
-        //.then((responseJson) => {
-        //    this.props.history.push("/fetchemployee");
-        //}) 
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                alert(data);
+            });
     }  
 }

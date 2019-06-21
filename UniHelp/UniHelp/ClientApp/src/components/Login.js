@@ -8,7 +8,13 @@ export class Login extends Component {
     }
 
     render() {
-        let content = this.renderLoginForm();
+        let content = window.localStorage.getItem('userRole') == "Admin"
+            || window.localStorage.getItem('userRole') == "Administration"
+            || window.localStorage.getItem('userRole') == "Teacher"
+            || window.localStorage.getItem('userRole') == "Student"
+            ? "You are logged in as " + window.localStorage.getItem('userName')
+            : this.renderLoginForm();
+
         return (
             <div>
                 {content}
@@ -60,14 +66,13 @@ export class Login extends Component {
         .then(data => {
             window.localStorage.setItem('userName', data[0]);
             window.localStorage.setItem('userRole', data[1]);
-            window.location.reload();
-            if(data[0] != "failed")
+            if (data[0] != "failed") {
+                //window.location.href = "https://unihelptu.azurewebsites.net/newsfeed";
                 window.location.href = "https://192.168.1.3:5566/newsfeed";
+            }
+            else {
+                alert("Wrong username or password !");
+            }
         });
-
-        //.then((response) => response.json())
-        //.then((responseJson) => {
-        //    this.props.history.push("/fetchemployee");
-        //}) 
     }  
 }
